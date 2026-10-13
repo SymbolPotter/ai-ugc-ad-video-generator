@@ -1,0 +1,63 @@
+# Default processing chain for a UGC ad job.
+# Each stage maps to a processor in src/ugc_pipeline/processors/registry.py
+
+[run]
+name = "default-ugc-ad"
+max_parallel_jobs = 4
+work_dir = "cache/jobs"
+output_dir = "renders"
+fail_fast = false
+
+[ingest]
+handlers = ["brief", "product_media", "avatar_ref"]
+max_upload_mb = 512
+allowed_mime = ["video/mp4", "video/quicktime", "image/png", "image/jpeg"]
+
+[chain]
+stages = [
+  "script_gen",
+  "voice_synth",
+  "avatar_anim",
+  "broll_match",
+  "caption_burn",
+  "render",
+]
+
+[script_gen]
+model = "models/copywriter-q4.onnx"
+max_tokens = 512
+temperature = 0.8
+prompt_template = "prompts/ugc_ad_brief.jinja"
+
+[voice_synth]
+engine = "piper"
+voice_pack = "models/voices/en-us-ugc-medium.onnx"
+speed = 1.05
+
+[avatar_anim]
+engine = "talking-head-lite"
+fps = 30
+max_seconds = 45
+
+[broll_match]
+index = "cache/broll.faiss"
+top_k = 6
+min_score = 0.42
+
+[caption_burn]
+style = "ugc-bold"
+font = "assets/fonts/Inter-Black.ttf"
+position = "bottom-center"
+
+[render]
+codec = "h264_nvenc"
+fallback_codec = "libx264"
+crf = 20
+preset = "p5"
+resolution = "1080x1920"
+fps = 30
+
+[api]
+host = "127.0.0.1"
+port = 8765
+auth_token_env = "UGC_API_TOKEN"
