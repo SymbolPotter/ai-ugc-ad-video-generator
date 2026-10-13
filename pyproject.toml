@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-ugc-ad-video-generator"
+version = "0.4.2"
+description = "Pipeline-driven AI generator for UGC-style ad videos."
+readme = "CONTRIBUTING.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "UGC Ad Pipeline Contributors" }]
+keywords = ["ugc", "ads", "video", "generative", "pipeline", "ffmpeg"]
+
+dependencies = [
+    "pydantic>=2.6,<3",
+    "typer>=0.12",
+    "rich>=13.7",
+    "httpx>=0.27",
+    "numpy>=1.26",
+    "pillow>=10.2",
+    "tomli>=2.0; python_version < '3.11'",
+    "watchdog>=4.0",
+]
+
+[project.optional-dependencies]
+gpu = ["onnxruntime-gpu>=1.17"]
+cpu = ["onnxruntime>=1.17"]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "black>=24.3",
+    "mypy>=1.9",
+    "pre-commit>=3.7",
+]
+
+[project.scripts]
+ugc = "ugc_pipeline.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.black]
+line-length = 100
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+packages = ["ugc_pipeline"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
