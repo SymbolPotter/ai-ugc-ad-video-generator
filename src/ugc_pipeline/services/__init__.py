@@ -1,0 +1,1 @@
+"""External service adapters (ffmpeg, tts, avatar, captions, index)."""
